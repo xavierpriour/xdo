@@ -26,7 +26,15 @@ _xdo_listCommands () {
 }
 
 _xdo_autocomplete () {
-  list_stages=`[ -d stages ] && ls -d stages/*/ | sed 's/stages\/\(.*\)\//\1/'`
+  source $XDO_HOME/commands/_internal.sh
+  findRoot
+  if [ -z "$xdo_root" ]; then
+    exit 0;
+  fi
+
+  cd $xdo_root/
+
+  list_stages=`[ -d $stages ] && ls -d stages/*/ | sed 's/stages\/\(.*\)\//\1/'`
   _xdo_listCommands
   list_applications=`[ -d applications ] && ls -d applications/*/ | sed -e's/applications\/\(.*\)\/$/\1/'`
   list_infra=`[ -d infra ] && ls -d infra/*/ | sed -e's/infra\/\(.*\)\/$/\1/'`

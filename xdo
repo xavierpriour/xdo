@@ -37,17 +37,18 @@ function xdo_findFirst() {
 # Loads the first file it finds that matches relative path in ./ + XDO_PATH
 #
 # $1: relative path to the file
-function xdo_loadFirst() {
-  xdo_findFirst $1
-  if [ -z "$xdo_file" ]; then
-    echo "ERROR - unable to load $1, is it in the XDO_PATH ($xdo_path)?"
-    exit 1
-  else
-    source "$xdo_file"
-  fi
-}
+#function xdo_loadFirst() {
+#  xdo_findFirst $1
+#  if [ -z "$xdo_file" ]; then
+#    echo "ERROR - unable to load $1, is it in the XDO_PATH ($xdo_path)?"
+#    exit 1
+#  else
+#    source "$xdo_file"
+#  fi
+#}
 
-xdo_loadFirst commands/_functions.sh
+source $XDO_HOME/commands/_internal.sh
+source $XDO_HOME/commands/_functions.sh
 
 # keep original command for timestamp
 command="xdo $*"
@@ -55,10 +56,16 @@ command="xdo $*"
 ts_start=`date +%s`
 timestamp "start '$command'"
 
+findRoot
+if [ -z "$xdo_root" ]; then
+  echo "ERROR - unable to find stages in the project, please create a ./stages folder at your root"
+  exit 1
+fi
+cd "$xdo_root"
+
 # $UID is not automatically passed
 export UID
 # actual script launch location may be useful in some scripts
-export XDO_ROOT=`pwd`
 
 # check and allocate args
 if [ -z "$1" ]
