@@ -12,7 +12,43 @@
 # - use specific action to connect: ./do pre connect xavier.priour@as
 # - execute arbitrary code:  ./do pre docker logs pre_datanimist_1
 
-source ./commands/_functions.sh
+# sets $xdo_file to the absolute path of the 1st file
+# that matches relative path in ./ + XDO_PATH.
+# Or sets it empty if none found...
+function xdo_findFirst() {
+  # todo check that passed arg is relative
+  xdo_file=''
+  local xdo_path=".:$XDO_PATH"
+  local IFS=':'
+  local folders
+  set -f
+  folders=( $xdo_path )
+  set +f
+  for d in "${folders[@]}"
+  do
+    local file="$d/$1"
+    if [ -e "$file" ]; then
+      xdo_file="$file"
+      break;
+    fi
+  done
+}
+
+# Loads the first file it finds that matches relative path in ./ + XDO_PATH
+#
+# $1: relative path to the file
+function xdo_loadFirst() {
+  xdo_findFirst $1
+  if [ -z "$xdo_file" ]; then
+    echo "ERROR - unable to load $1, is it in the XDO_PATH ($xdo_path)?"
+    exit 1
+  else
+    source "$xdo_file"
+  fi
+}
+
+xdo_loadFirst commands/_functions.sh
+#source ./commands/_functions.sh
 
 # keep original command for timestamp
 command="xdo $*"
@@ -64,13 +100,15 @@ do
   fi
 done
 
+xdo_findFirst "commands/$ACTION.sh"
+echo $actionInPath
 # now execute actual ACTION
 if [ -e ./stages/$STG/$ACTION.sh ]
 then
   ./stages/$STG/$ACTION.sh $ARGS
-elif [ -e ./commands/$ACTION.sh ]
+elif [ -e "$xdo_file" ]
 then
-  ./commands/$ACTION.sh $ARGS
+  $xdo_file $ARGS
 else
   # let's just eval the args in the context of the selected stage.
   # beware, the args are NOT evaluated on the docker machine - call ./do ssh [args] if you want that
