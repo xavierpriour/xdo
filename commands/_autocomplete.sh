@@ -19,7 +19,7 @@ _xdo_listCommands () {
   do
     local commands="$d/commands"
     if [ -d "$commands" ]; then
-      local newActions=`ls -p $commands/*.sh | sed -e 's/.*commands\/\(.*\)\.sh$/\1/' -e '/^_/ d'`
+      local newActions=`find $commands -type f | grep .sh | sed -e 's/.*commands\/\(.*\)\.sh$/\1/' -e '/^_/ d'`
       list_commands="$list_commands $newActions"
     fi
   done
