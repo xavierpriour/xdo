@@ -13,10 +13,11 @@ It is easy to extend, and does not have any dependency, beyond `bash`.
 
 To install:
 
-- clone this repo
-- link `xdo` into your path: `sudo ln -s ./xdo /usr/local/bin` 
-- add `XDO_PATH` to your `~/.profile` pointing to this folder
-- test: `xdo nostage noop`
+- clone this repo: `cd ~/projects && git clone git@github.com:xavierpriour/xdo.git`
+- link `xdo` into your path: `sudo ln -s ~/projects/xdo/xdo /usr/local/bin` 
+- add `XDO_HOME` to your init file (ex: `~/.zshrc`), pointing to this folder: `export XDO_HOME=$HOME/projects/xdo`
+- also add `source $XDO_HOME/commands/_autocomplete.sh` to enable autocompletion
+- test in $XDO_HOME: `xdo nostage noop`
 
 TODO: example public project
 

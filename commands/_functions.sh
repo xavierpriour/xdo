@@ -7,7 +7,6 @@ ensure() {
   do
     if [ -z "${!arg}" ]
     then
-#      echo "parameter $arg is mandatory but wasn't set"
       timestamp "error: parameter '$arg' is mandatory but wasn't set"
       exit 1
     fi
