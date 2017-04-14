@@ -11,9 +11,18 @@ with a simple and consistent syntax.
 
 It is easy to extend, and does not have any dependency, beyond `bash`.
 
+To install:
+
+- clone this repo
+- link `xdo` into your path: `sudo ln -s ./xdo /usr/local/bin` 
+- add `XDO_PATH` to your `~/.profile` pointing to this folder
+- test: `xdo nostage noop`
+
 TODO: example public project
 
 ## standard elements
+
+Standard xdo commands and functions are geared toward docker images.
 
 (TODO)
 
