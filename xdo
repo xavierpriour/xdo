@@ -100,7 +100,6 @@ do
 done
 
 xdo_findFirst "commands/$ACTION.sh"
-echo $actionInPath
 # now execute actual ACTION
 if [ -e ./stages/$STG/$ACTION.sh ]
 then
