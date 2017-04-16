@@ -21,6 +21,15 @@ To install:
 
 TODO: example public project
 
+## commands
+
+All project command scripts should go into folder `./commands`.
+Any file starting with an underscore will be ignored by the autocomplete.
+
+If present, the file `./commands/_lib.sh` will be sourced before any command is run.
+Use it to define common functions or variables
+(don't forget to `export` them so they are accessible to the commands).
+
 ## standard elements
 
 Standard xdo commands and functions are geared toward docker images.
