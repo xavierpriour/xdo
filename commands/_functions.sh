@@ -90,16 +90,17 @@ export -f setTargetList
 
 # Executes argumens on current docker-machine (using ssh), or locally if no docker-machine defined.
 # Example: sshDom docker ps -a
-sshDom() {
-  if [ -z $DOM_NAME ]
+sshExec() {
+  if [ -z $SSH_USER ]
   then
 #  echo "args=$*"
     eval $*
   else
-    docker-machine ssh $DOM_NAME $*
+    ssh "$SSH_USER@$SSH_HOST" $*
+#    docker-machine ssh $DOM_NAME $*
   fi
 }
-export -f sshDom
+export -f sshExec
 
 # Echoes 1st argument preceded by a timestamp
 # Example: timestamp "starting deployment on $STG"

@@ -6,7 +6,7 @@ with a simple and consistent syntax.
 
 - deploy to test? `xdo test deploy myApp:1.02`
 - deploy to prod? `xdo prod deploy myApp:1.02`
-- ssh into test? `xdo test ssh`
+- ssh into test server? `xdo test ssh`
 - build on ci server? `xdo ci build myApp:1.02`
 
 It is easy to extend, and does not have any dependency, beyond `bash`.
