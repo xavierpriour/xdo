@@ -111,6 +111,19 @@ if [ -e ./commands/_lib.sh ]; then
   source ./commands/_lib.sh
 fi
 
+# if using docker-machine, activate the right one
+if [ ! -z "$DOM_NAME" ]
+then
+  status=`docker-machine status $DOM_NAME`
+  if [ "$status" == "Stopped" ]
+  then
+    echo "docker-machine $DOM_NAME is stopped, trying to start it"
+    docker-machine start $DOM_NAME
+    # todo: check afterward that it started ok
+  fi
+  eval $(docker-machine env $DOM_NAME)
+fi
+
 xdo_findFirst "commands/$ACTION.sh"
 # now execute actual ACTION
 if [ -e ./stages/$STG/$ACTION.sh ]
