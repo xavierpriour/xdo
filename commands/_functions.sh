@@ -91,13 +91,17 @@ export -f setTargetList
 # Executes argumens on current docker-machine (using ssh), or locally if no docker-machine defined.
 # Example: sshDom docker ps -a
 sshExec() {
-  if [ -z $SSH_USER ]
+  if [ -z "$SSH_USER" ]
   then
 #  echo "args=$*"
     eval $*
   else
-    ssh "$SSH_USER@$SSH_HOST" $*
+    if [ -n "$SSH_KEY" ]; then
+      ssh -i "$SSH_KEY" "$SSH_USER@$SSH_HOST" $*
+    else
+      ssh "$SSH_USER@$SSH_HOST" $*
 #    docker-machine ssh $DOM_NAME $*
+    fi
   fi
 }
 export -f sshExec

@@ -33,6 +33,20 @@ Use it to define common functions or variables
 ## standard elements
 
 Standard xdo commands and functions are geared toward docker images.
+Look into the scripts themselves for a full list of the environment variables they need.
+
+Utilities:
+
+- ssh: logs into a server (needs SSH_USER and SSH_HOST)
+
+Deployment:
+
+1. `create`: sets up a new environment (by default, turns $SSH_HOST into a docker-machine named $DOM_NAME)
+1. `provision`: initializes the recently-created machine (creating folders, copying files, etc.).
+1. `build`: packages the system for deployment
+1. `push`: uploads the package to your distribution mechanism (by default, a docker registry at $DOCKER_REGISTRY_ADDRESS)
+1. `pull`: downloads the package from your distribution mechanism
+1. `start`: launches your system (by default, does a docker-compose up)
 
 (TODO)
 
