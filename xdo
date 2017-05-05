@@ -53,7 +53,7 @@ source $XDO_HOME/commands/_functions.sh
 # keep original command for timestamp
 command="xdo $*"
 
-ts_start=`date +%s`
+ts_start=`date '+%s'`
 timestamp "start '$command'"
 
 findRoot
@@ -138,6 +138,6 @@ else
   eval $ACTION $ARGS
 fi
 
-ts_end=`date +%s`
+ts_end=`date '+%s'`
 ts_dur=`printf "%'.f\n" $(($ts_end - $ts_start))`
 timestamp "finish '$command' ($ts_dur seconds)"

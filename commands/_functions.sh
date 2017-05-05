@@ -109,7 +109,7 @@ export -f sshExec
 # Echoes 1st argument preceded by a timestamp
 # Example: timestamp "starting deployment on $STG"
 timestamp() {
-  ts=`date --rfc-3339=seconds`
+  ts=`date '+%FT%T'`
   echo "$ts > $1"
 }
 export -f timestamp
