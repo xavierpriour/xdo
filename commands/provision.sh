@@ -4,9 +4,12 @@
 # creating local folders and copying config files that will then be mounted.
 # Beware: calling it on an existing machine will not erase user data BUT reset its config.
 #
+# The provisioning script it delegates to should properly handle the various setup possibilities
+# (local live dev vs production).
+#
 # With an argument, will only provision/reset the specified service/app
 
-ensure DOM_NAME
+#ensure DOM_NAME
 
 # default to provisioning EVERYTHING
 initial_list=$*
@@ -18,9 +21,9 @@ onlyAppsOrServices $target_list
 for tgt in $target_list
 do
   setAppTag $tgt
-  if [ -e "./applications/$app/config/docker/provision.sh" ]; then
+  if [ -e "./applications/$app/provision.sh" ]; then
     echo "-- provisioning app $app"
-    ./applications/$app/config/docker/provision.sh
+    ./applications/$app/provision.sh
   elif [ -e "./services/$app/provision.sh" ]; then
     echo "-- provisioning service $app"
     ./services/$app/provision.sh
