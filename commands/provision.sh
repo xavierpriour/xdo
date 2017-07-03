@@ -23,7 +23,9 @@ do
   setAppTag $tgt
   if [ -e "./applications/$app/provision.sh" ]; then
     echo "-- provisioning app $app"
-    ./applications/$app/provision.sh
+    cd ./applications/$app
+    ./provision.sh
+    cd ../..
   elif [ -e "./services/$app/provision.sh" ]; then
     echo "-- provisioning service $app"
     ./services/$app/provision.sh
