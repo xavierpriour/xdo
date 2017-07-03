@@ -109,7 +109,9 @@ export -f sshExec
 # Echoes 1st argument preceded by a timestamp
 # Example: timestamp "starting deployment on $STG"
 timestamp() {
-  ts=`date '+%FT%T'`
-  echo "$ts > $1"
+  if [ -n "$XDO_LOG" ]; then
+    ts=`date '+%FT%T'`
+    echo "$ts > $1"
+  fi
 }
 export -f timestamp

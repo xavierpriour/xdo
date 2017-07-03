@@ -30,6 +30,8 @@ If present, the file `./commands/_lib.sh` will be sourced before any command is 
 Use it to define common functions or variables
 (don't forget to `export` them so they are accessible to the commands).
 
+To get timestamps and start/stop logs, set XDO_LOG before calling.
+
 ## standard elements
 
 Standard xdo commands and functions are geared toward docker images.
