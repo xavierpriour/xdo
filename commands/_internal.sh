@@ -14,4 +14,3 @@ function findRoot() {
     current=`echo $current | sed -e"s/\(.*\)\/.*$/\1/"`
   done
 }
-export -f findRoot

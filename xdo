@@ -48,6 +48,7 @@ function xdo_findFirst() {
 #}
 
 source $XDO_HOME/commands/_internal.sh
+export -f findRoot
 source $XDO_HOME/commands/_functions.sh
 
 # keep original command for timestamp
@@ -114,13 +115,13 @@ fi
 # if using docker-machine, activate the right one
 if [ ! -z "$DOM_NAME" ]
 then
-  status=`docker-machine status $DOM_NAME`
-  if [ "$status" == "Stopped" ]
-  then
-    echo "docker-machine $DOM_NAME is stopped, trying to start it"
-    docker-machine start $DOM_NAME
-    # todo: check afterward that it started ok
-  fi
+#  status=`docker-machine status $DOM_NAME`
+#  if [ "$status" == "Stopped" ]
+#  then
+#    echo "docker-machine $DOM_NAME is stopped, trying to start it"
+#    docker-machine start $DOM_NAME
+#    # todo: check afterward that it started ok
+#  fi
   eval $(docker-machine env $DOM_NAME)
 fi
 
