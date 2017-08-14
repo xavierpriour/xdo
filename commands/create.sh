@@ -5,7 +5,7 @@
 #
 # It is non destructive and can also be called on an existing host, to add it to the client docker-machine lists.
 #
-# Ex: ./do prod_client1 create
+# Ex: ./xdo prod_client1 create
 
 ensure SSH_USER SSH_HOST SSH_KEY DOM_NAME
 
@@ -23,6 +23,7 @@ if [ -z "$exists" ]; then
     --generic-ip-address $SSH_HOST\
     --generic-ssh-user $SSH_USER \
     --generic-ssh-key $SSH_KEY \
+    --generic-ssh-port ${SSH_PORT:-22} \
     --engine-storage-driver devicemapper \
     $DOM_NAME
 else
