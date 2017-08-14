@@ -96,12 +96,15 @@ sshExec() {
 #  echo "args=$*"
     eval $*
   else
+    ssh_opts="$SSH_USER@$SSH_HOST"
     if [ -n "$SSH_KEY" ]; then
-      ssh -i "$SSH_KEY" "$SSH_USER@$SSH_HOST" $*
-    else
-      ssh "$SSH_USER@$SSH_HOST" $*
-#    docker-machine ssh $DOM_NAME $*
+      ssh_opts="-i $SSH_KEY $ssh_opts"
     fi
+    if [ -n "$SSH_PORT" ]; then
+      ssh_opts="-p $SSH_PORT $ssh_opts"
+    fi
+    ssh $ssh_opts $*
+#    docker-machine ssh $DOM_NAME $*
   fi
 }
 export -f sshExec
