@@ -49,6 +49,19 @@ setAppTag() {
 }
 export -f setAppTag
 
+setDockerComposeFile() {
+  inner_stage_compose="stages/$STG/docker-compose.yml"
+  docker_compose_file='./docker-compose.yml'
+  if [ -e "$inner_stage_compose" ]; then
+    docker_compose_file=$inner_stage_compose
+  fi
+  if [ ! -e "$docker_compose_file" ]; then
+    echo "-- unable to locate a docker-compose file, please provide one in the $STG dir or at project root > cancelling"
+      exit 1
+  fi
+}
+export -f setDockerComposeFile
+
 # $1 is the list of targets passed to command
 # this function will set $target_list to a proper space-separated list of apps or services with an associated tag,
 # handling all special cases like (none), +services, or any mix
