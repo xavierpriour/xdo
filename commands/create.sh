@@ -11,11 +11,26 @@ ensure SSH_USER SSH_HOST SSH_KEY DOM_NAME
 
 exists=`docker-machine ls | grep -e "$DOM_NAME"`
 
-if [ -z "$exists" ]; then
+if [ -z "$exists" ] || [ "$1" = "--force" ]; then
   echo "-- create $DOM_NAME"
+  # does ssh key exist?
+  if [ ! -e $SSH_KEY ]; then
+    folder=$(dirname "$SSH_KEY")
+    file=$(basename "$SSH_KEY")
+    echo "key $file does not exist, creating it in folder $folder"
+    # 1. create folder
+    mkdir -p $folder
+    # 2. generate key
+    ssh-keygen -t rsa -b 4096 -o -a 100 -C "$DOM_NAME" -f $SSH_KEY
+  fi
+
   # copy the ssh key file (will need root password)
   # they should be called <pki> and <pki>.pub and be stored in the same (safe) local folder
   cat $SSH_KEY.pub | ssh $SSH_USER@$SSH_HOST 'cat > .ssh/authorized_keys'
+
+  # there is a bug in docker-machine that uses older 'docker daemon' command instead of the
+  # correct 'dockerd' in the service defintion
+
 
   # engine-storage-driver is mandatory, otherwise crashes on kimsufi
   docker-machine -D create \
@@ -26,11 +41,29 @@ if [ -z "$exists" ]; then
     --generic-ssh-port ${SSH_PORT:-22} \
     --engine-storage-driver devicemapper \
     $DOM_NAME
+
+  # setup docker to restart on reboot
+  sshExec "sudo systemctl enable docker"
+  # setup iptables to load rules on reboot
+  sudo systemctl enable iptables-restore
+
+  echo "----"
+  echo "If there are errors in the above lines, see notes inside create.sh for how to fix"
 else
   echo "-- existing $DOM_NAME"
 fi
 
+# NOTE
+# There is currently a bug on docker-machine.
+# The service file it creates in /etc/systemd/system/docker.service.d/10-machine.conf has an incorrect command
+# We need to remove it, then restart.
+# At this point the service file at /lib/systemd/system/docker.service takes precedence (and it has the right command)
+#
+# Then we can:
+# - finish install: xdo $stg create --force
+# - regen cert if needed: docker-machine regenerate-certs $stg-all-1
+
 # setup docker to restart on reboot
-sshExec "sudo systemctl enable docker"
+#sshExec "sudo systemctl enable docker"
 # setup iptables to load rules on reboot
-sudo systemctl enable iptables-restore
+#sudo systemctl enable iptables-restore
