@@ -139,6 +139,10 @@ else
   eval $ACTION $ARGS
 fi
 
+exit_code=$?
+
 ts_end=`date '+%s'`
 ts_dur=`printf "%'.f\n" $(($ts_end - $ts_start))`
 timestamp "finish '$command' ($ts_dur seconds)"
+
+exit $exit_code
