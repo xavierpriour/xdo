@@ -13,7 +13,7 @@ exists=`docker-machine ls | grep -e "$DOM_NAME"`
 
 if [ -z "$exists" ] || [ "$1" = "--force" ]; then
   echo "-- create $DOM_NAME"
-  # does ssh key exist?
+  # 1. if ssh key does not exist, create it
   if [ ! -e $SSH_KEY ]; then
     folder=$(dirname "$SSH_KEY")
     file=$(basename "$SSH_KEY")
@@ -24,9 +24,13 @@ if [ -z "$exists" ] || [ "$1" = "--force" ]; then
     ssh-keygen -t rsa -b 4096 -o -a 100 -C "$DOM_NAME" -f $SSH_KEY
   fi
 
-  # copy the ssh key file (will need root password)
-  # they should be called <pki> and <pki>.pub and be stored in the same (safe) local folder
-  cat $SSH_KEY.pub | ssh $SSH_USER@$SSH_HOST 'cat > .ssh/authorized_keys'
+  # 2. copy ssh key file - they should be called <pki> and <pki>.pub and be stored in the same (safe) local folder
+  IS_COREOS=`sshExec 'cat /etc/os-release' | grep CoreOS`
+  if [ "$IS_COREOS" ]; then
+    cat $SSH_KEY.pub | sshExec 'cat | update-ssh-keys -a docker-machine'
+  else
+    cat $SSH_KEY.pub | sshExec 'cat > .ssh/authorized_keys'
+  fi
 
   # there is a bug in docker-machine that uses older 'docker daemon' command instead of the
   # correct 'dockerd' in the service defintion
@@ -45,7 +49,7 @@ if [ -z "$exists" ] || [ "$1" = "--force" ]; then
   # setup docker to restart on reboot
   sshExec "sudo systemctl enable docker"
   # setup iptables to load rules on reboot
-  sudo systemctl enable iptables-restore
+  sshExec "sudo systemctl enable iptables-restore"
 
   echo "----"
   echo "If there are errors in the above lines, see notes inside create.sh for how to fix"
