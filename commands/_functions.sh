@@ -50,10 +50,16 @@ setAppTag() {
 export -f setAppTag
 
 setDockerComposeFile() {
-  inner_stage_compose="stages/$STG/docker-compose.yml"
-  docker_compose_file='./docker-compose.yml'
-  if [ -e "$inner_stage_compose" ]; then
-    docker_compose_file=$inner_stage_compose
+  inner_stage_compose="./stages/$STG/docker-compose.yml"
+  mid_stage_compose="./stages/docker-compose.yml"
+  root_stage_compose="./docker-compose.yml"
+
+  docker_compose_file=$inner_stage_compose
+  if [ ! -e "$docker_compose_file" ]; then
+    docker_compose_file=$mid_stage_compose
+  fi
+  if [ ! -e "$docker_compose_file" ]; then
+    docker_compose_file=$root_stage_compose
   fi
   if [ ! -e "$docker_compose_file" ]; then
     echo "-- unable to locate a docker-compose file, please provide one in the $STG dir or at project root > cancelling"
