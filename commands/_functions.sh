@@ -7,7 +7,7 @@ ensure() {
   do
     if [ -z "${!arg}" ]
     then
-      timestamp "error: parameter '$arg' is mandatory but wasn't set"
+      echo "error: parameter '$arg' is mandatory but wasn't set"
       exit 1
     fi
   done
@@ -54,7 +54,15 @@ setDockerComposeFile() {
   mid_stage_compose="./stages/docker-compose.yml"
   root_stage_compose="./docker-compose.yml"
 
-  docker_compose_file=$inner_stage_compose
+  if [ -n "$DOCKER_COMPOSE_FILE" ]; then
+    docker_compose_file=$DOCKER_COMPOSE_FILE
+    if [ ! -e "$docker_compose_file" ]; then
+      echo "-- environment declares DOCKER_COMPOSE_FILE=$DOCKER_COMPOSE_FILE but file does not exist, please fix > cancelling"
+      exit 1
+    fi
+  else
+    docker_compose_file=$inner_stage_compose
+  fi
   if [ ! -e "$docker_compose_file" ]; then
     docker_compose_file=$mid_stage_compose
   fi
@@ -63,7 +71,7 @@ setDockerComposeFile() {
   fi
   if [ ! -e "$docker_compose_file" ]; then
     echo "-- unable to locate a docker-compose file, please provide one in the $STG dir or at project root > cancelling"
-      exit 1
+    exit 1
   fi
 }
 export -f setDockerComposeFile
