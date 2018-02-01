@@ -15,7 +15,7 @@ shift
 
 # we may have different stacks running the same services,
 # if we do we actually want to use the one that is currently up
-running=`docker ps | grep _${service}_ | sed -E "s/([[:alnum:]]+_${service}_[[:digit:]]+).*/\1/"`
+running=`docker ps | grep _${service}_ | sed -E "s/(.* )?([[:alnum:]]+_${service}_[[:digit:]]+).*/\2/"`
 
 if [ "$running" ]; then
   docker exec $running $*
