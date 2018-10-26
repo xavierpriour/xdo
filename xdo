@@ -18,11 +18,11 @@
 function xdo_findFirst() {
   # todo check that passed arg is relative
   xdo_file=''
-  local xdo_path=".:$XDO_HOME:$XDO_PATH"
+  local all_path=".:$XDO_HOME:$XDO_PATH"
   local IFS=':'
   local folders
   set -f
-  folders=( $xdo_path )
+  folders=( $all_path )
   set +f
   for d in "${folders[@]}"
   do
@@ -47,22 +47,26 @@ function xdo_findFirst() {
 #  fi
 #}
 
-source $XDO_HOME/commands/_internal.sh
+# shellcheck source=./_internal.sh
+source "$XDO_HOME/commands/_internal.sh"
 export -f findRoot
-source $XDO_HOME/commands/_functions.sh
+# shellcheck source=./_functions.sh
+source "$XDO_HOME/commands/_functions.sh"
 
 # keep original command for timestamp
 command="xdo $*"
 
-ts_start=`date '+%s'`
+ts_start=$(date '+%s')
 timestamp "start '$command'"
 
 findRoot
+# it's ok if xdo_root is not set
+# shellcheck disable=SC2154
 if [ -z "$xdo_root" ]; then
   echo "ERROR - unable to find stages in the project, please create a ./stages folder at your root"
   exit 1
 fi
-cd "$xdo_root"
+cd "$xdo_root" || exit
 
 # $UID is not automatically passed
 export UID
@@ -88,7 +92,7 @@ then
 fi
 export ACTION=$1
 shift
-export ARGS=$*
+export ARGS="$*"
 
 ensure STG ACTION
 
@@ -103,6 +107,7 @@ for env_file in "${possible_env_files[@]}"
 do
   if [ -e "$env_file" ]
   then
+    # shellcheck source=/dev/null
     source "$env_file"
   fi
 done
@@ -122,27 +127,27 @@ then
 #    docker-machine start $DOM_NAME
 #    # todo: check afterward that it started ok
 #  fi
-  eval $(docker-machine env $DOM_NAME)
+  eval "$(docker-machine env "$DOM_NAME")"
 fi
 
 xdo_findFirst "commands/$ACTION.sh"
 # now execute actual ACTION
-if [ -e ./stages/$STG/$ACTION.sh ]
+if [ -e "./stages/$STG/$ACTION.sh" ]
 then
-  ./stages/$STG/$ACTION.sh $ARGS
+  "./stages/$STG/$ACTION.sh" $ARGS
 elif [ -e "$xdo_file" ]
 then
-  $xdo_file $ARGS
+  "$xdo_file" $ARGS
 else
   # let's just eval the args in the context of the selected stage.
   # beware, the args are NOT evaluated on the docker machine - call ./do ssh [args] if you want that
-  eval $ACTION $ARGS
+  eval "$ACTION" "$ARGS"
 fi
 
 exit_code=$?
 
-ts_end=`date '+%s'`
-ts_dur=`printf "%'.f\n" $(($ts_end - $ts_start))`
+ts_end=$(date '+%s')
+ts_dur=$(printf "%'.f" $((ts_end - ts_start)))
 timestamp "finish '$command' ($ts_dur seconds)"
 
 exit $exit_code
