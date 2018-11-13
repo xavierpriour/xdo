@@ -83,7 +83,7 @@ setK8sPod() {
   k8sPod_inputPod=${k8sPod_input%%:*}
   k8sPod_inputContainer=${k8sPod_input##k8sPod_inputPod}
   k8sPod_inputContainer=${k8sPod_inputContainer##*:}
-  k8sPod=`kubectl get po | grep ${k8sPod_inputPod}- | cut -d " " -f1`
+  k8sPod=`kubectl get po | grep "^${k8sPod_inputPod}-depl" | cut -d " " -f1`
   k8sContainer=$k8sPod_inputContainer
 }
 export -f setK8sPod
