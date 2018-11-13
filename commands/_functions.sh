@@ -76,6 +76,18 @@ setDockerComposeFile() {
 }
 export -f setDockerComposeFile
 
+# finds the exact name of the pod containing service $1
+# if pod contains multiple containers, specify which one with pod:container
+setK8sPod() {
+  k8sPod_input=$1
+  k8sPod_inputPod=${k8sPod_input%%:*}
+  k8sPod_inputContainer=${k8sPod_input##k8sPod_inputPod}
+  k8sPod_inputContainer=${k8sPod_inputContainer##*:}
+  k8sPod=`kubectl get po | grep ${k8sPod_inputPod}- | cut -d " " -f1`
+  k8sContainer=$k8sPod_inputContainer
+}
+export -f setK8sPod
+
 # $1 is the list of targets passed to command
 # this function will set $target_list to a proper space-separated list of apps or services with an associated tag,
 # handling all special cases like (none), +services, or any mix
