@@ -18,7 +18,8 @@ shift
 running=`docker ps | grep _${service}_ | sed -E "s/(.* )?([[:alnum:]]+_${service}_[[:digit:]]+).*/\2/"`
 
 if [ "$running" ]; then
-  docker exec $running $*
+  xdo $STG docker-compose exec $service $*
+#  docker exec $running $*
 else
   xdo $STG docker-compose run --rm $service $*
 fi
