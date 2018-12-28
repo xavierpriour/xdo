@@ -92,6 +92,7 @@ export -f setK8sPod
 # this function will set $target_list to a proper space-separated list of apps or services with an associated tag,
 # handling all special cases like (none), +services, or any mix
 setTargetList() {
+  setDockerComposeFile
   # if none supplied, list all applications, latest tag
   initial_list=$*
   : ${initial_list:='+applications:latest'}
@@ -106,7 +107,15 @@ setTargetList() {
     tgt="$app:$tag"
     if [ "$app" == '+applications' ]; then
       if [ -d "applications/" ]; then
-        tgt=`ls -d applications/*/ | sed -e"s/applications\/\(.*\)\/$/\1:$tag/"`
+        # result is ALL apps listed here PRESENT in the docker stack
+        # 1. all apps in the docker-compose file
+        _dockerSvc=`docker-compose -f $docker_compose_file config --services`
+        # 2. all apps in our folders
+        _apps=`ls -d applications/*/ | sed -e"s/applications\/\(.*\)\/$/\1/"`
+        # 3. intersection (using bash black magic)
+        _comm=`comm -12 <(echo $_dockerSvc | tr ' ' '\n' | sort) <(echo $_apps | tr ' ' '\n' |sort)`
+        # 4. then add tag
+        tgt=`echo $_comm | tr ' ' '\n' | sed -e"s/$/:$tag/"`
       else
         tgt=''
       fi
@@ -115,7 +124,16 @@ setTargetList() {
       tgt=`ls -d infra/*/ | sed -e"s/infra\/\(.*\)\/$/\1:$tag/"`
     fi
     if [ "$app" == '+services' ]; then
-      tgt=`ls -d services/*/ | sed -e"s/services\/\(.*\)\/$/\1:$tag/"`
+      # result is ALL services listed here PRESENT in the docker stack
+      # 1. all services in the docker-compose file
+      _dockerSvc=`docker-compose -f $docker_compose_file config --services`
+      # 2. all apps in our folders
+      _apps=`ls -d services/*/ | sed -e"s/services\/\(.*\)\/$/\1/"`
+      # 3. intersection (using bash black magic)
+      _comm=`comm -12 <(echo $_dockerSvc | tr ' ' '\n' | sort) <(echo $_apps | tr ' ' '\n' |sort)`
+      # 4. then add tag
+      tgt=`echo $_comm | tr ' ' '\n' | sed -e"s/$/:$tag/"`
+#      tgt=`ls -d services/*/ | sed -e"s/services\/\(.*\)\/$/\1:$tag/"`
     fi
     target_list="$target_list$tgt "
   done
