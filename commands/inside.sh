@@ -20,7 +20,7 @@ echo $running
 
 if [ "$running" ]; then
 #  xdo $STG docker-compose exec $service $*
-  docker exec $running $*
+  docker exec -it $running $*
 else
   xdo $STG docker-compose run --rm $service $*
 fi
