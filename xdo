@@ -92,7 +92,6 @@ then
 fi
 export ACTION=$1
 shift
-export ARGS="$*"
 
 ensure STG ACTION
 
@@ -134,14 +133,14 @@ xdo_findFirst "commands/$ACTION.sh"
 # now execute actual ACTION
 if [ -e "./stages/$STG/$ACTION.sh" ]
 then
-  "./stages/$STG/$ACTION.sh" $ARGS
+  "./stages/$STG/$ACTION.sh" "$@"
 elif [ -e "$xdo_file" ]
 then
-  "$xdo_file" $ARGS
+  "$xdo_file" "$@"
 else
   # let's just eval the args in the context of the selected stage.
   # beware, the args are NOT evaluated on the docker machine - call ./do ssh [args] if you want that
-  eval "$ACTION" "$ARGS"
+  eval "$ACTION" "$@"
 fi
 
 exit_code=$?
