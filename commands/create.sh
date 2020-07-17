@@ -26,7 +26,8 @@ if [ -z "$exists" ] || [ "$1" = "--force" ]; then
 
   # 2. copy ssh key file - they should be called <pki> and <pki>.pub and be stored in the same (safe) local folder
   IS_COREOS=`sshExec 'cat /etc/os-release' | grep CoreOS`
-  if [ "$IS_COREOS" ]; then
+  IS_FLATCAR=`sshExec 'cat /etc/os-release' | grep Flatcar`
+  if [ "$IS_COREOS" ] || [ "$IS_FLATCAR" ]; then
     cat $SSH_KEY.pub | sshExec 'cat | update-ssh-keys -a docker-machine'
   else
     cat $SSH_KEY.pub | sshExec 'cat > .ssh/authorized_keys'
