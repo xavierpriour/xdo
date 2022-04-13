@@ -12,7 +12,7 @@ echo "
   args=$*
 
   docker-compose=$docker_compose_file
-  docker-machine=$DOM_NAME
+  host=$DOCKER_HOST
 
   target_list=$target_list
 "

@@ -117,7 +117,8 @@ if [ -e ./commands/_lib.sh ]; then
 fi
 
 # if using docker-machine, activate the right one
-if [ ! -z "$DOM_NAME" ]
+#if [ ! -z "$DOM_NAME" ]
+if [ ! -z "$SSH_HOST" ]
 then
 #  status=`docker-machine status $DOM_NAME`
 #  if [ "$status" == "Stopped" ]
@@ -126,7 +127,8 @@ then
 #    docker-machine start $DOM_NAME
 #    # todo: check afterward that it started ok
 #  fi
-  eval "$(docker-machine env "$DOM_NAME")"
+  export DOCKER_HOST="ssh://${SSH_USER}@${SSH_HOST}:${SSH_PORT:-22}"
+#  eval "$(docker-machine env "$DOM_NAME")"
 fi
 
 xdo_findFirst "commands/$ACTION.sh"
@@ -139,7 +141,7 @@ then
   "$xdo_file" "$@"
 else
   # let's just eval the args in the context of the selected stage.
-  # beware, the args are NOT evaluated on the docker machine - call ./do ssh [args] if you want that
+  # beware, the args are NOT evaluated on the docker machine - call ./xdo ssh [args] if you want that
   eval "$ACTION" "$@"
 fi
 
