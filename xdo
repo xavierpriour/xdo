@@ -117,18 +117,24 @@ if [ -e ./commands/_lib.sh ]; then
 fi
 
 # if using docker-machine, activate the right one
-#if [ ! -z "$DOM_NAME" ]
-if [ ! -z "$SSH_HOST" ]
+if [ ! -z "$DOM_NAME" ]
 then
-#  status=`docker-machine status $DOM_NAME`
-#  if [ "$status" == "Stopped" ]
-#  then
-#    echo "docker-machine $DOM_NAME is stopped, trying to start it"
-#    docker-machine start $DOM_NAME
-#    # todo: check afterward that it started ok
-#  fi
-  export DOCKER_HOST="ssh://${SSH_USER}@${SSH_HOST}:${SSH_PORT:-22}"
-#  eval "$(docker-machine env "$DOM_NAME")"
+  #  status=`docker-machine status $DOM_NAME`
+  #  if [ "$status" == "Stopped" ]
+  #  then
+  #    echo "docker-machine $DOM_NAME is stopped, trying to start it"
+  #    docker-machine start $DOM_NAME
+  #    # todo: check afterward that it started ok
+  #  fi
+ eval "$(docker-machine env "$DOM_NAME")"
+else
+  if [ ! -z "$SSH_HOST" ]
+  then
+    # this is in anticipation of dropping docker-machine (which is deprecated).
+    # but some additional work is needed:
+    # - upgrade all servers
+    export DOCKER_HOST="ssh://${SSH_USER}@${SSH_HOST}:${SSH_PORT:-22}"
+  fi
 fi
 
 xdo_findFirst "commands/$ACTION.sh"

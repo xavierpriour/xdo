@@ -145,7 +145,7 @@ setTargetList() {
 }
 export -f setTargetList
 
-# Executes argumens on current docker-machine (using ssh), or locally if no docker-machine defined.
+# Executes arguments on current docker-machine (using ssh), or locally if no docker-machine defined.
 # Example: sshDom docker ps -a
 sshExec() {
   if [ -z "$SSH_USER" ] || [ -z "$SSH_HOST" ]
@@ -160,8 +160,8 @@ sshExec() {
     if [ -n "$SSH_PORT" ]; then
       ssh_opts="-p $SSH_PORT $ssh_opts"
     fi
+#    echo "-- ssh_opts=$ssh_opts"
     ssh $ssh_opts $*
-#    docker-machine ssh $DOM_NAME $*
   fi
 }
 export -f sshExec
