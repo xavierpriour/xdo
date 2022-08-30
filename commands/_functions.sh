@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# encapsulate docker-compose in a function for compatibility between old (docker-compose) and new (docker compose)
+dockerCompose() {
+  if [ -z `which docker-compose` ]; then
+    docker compose $*
+  else
+    docker-compose $*
+  fi
+}
+export -f dockerCompose
+
 # ensure we have non-empty environment variables for all supplied args, or exit the process.
 # Example: ensure DOM_NAME DOM_IP
 ensure() {
@@ -109,7 +119,7 @@ setTargetList() {
       if [ -d "applications/" ]; then
         # result is ALL apps listed here PRESENT in the docker stack
         # 1. all apps in the docker-compose file
-        _dockerSvc=`docker-compose -f $docker_compose_file config --services`
+        _dockerSvc=`dockerCompose -f $docker_compose_file config --services`
         # 2. all apps in our folders
         _apps=`ls -d applications/*/ | sed -e"s/applications\/\(.*\)\/$/\1/"`
         # 3. intersection (using bash black magic)
@@ -126,7 +136,7 @@ setTargetList() {
     if [ "$app" == '+services' ]; then
       # result is ALL services listed here PRESENT in the docker stack
       # 1. all services in the docker-compose file
-      _dockerSvc=`docker-compose -f $docker_compose_file config --services`
+      _dockerSvc=`dockerCompose -f $docker_compose_file config --services`
       # 2. all apps in our folders
       _apps=`ls -d services/*/ | sed -e"s/services\/\(.*\)\/$/\1/"`
       # 3. intersection (using bash black magic)
