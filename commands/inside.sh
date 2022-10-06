@@ -15,13 +15,11 @@ shift
 
 # we may have different stacks running the same services,
 # if we do we actually want to use the one that is currently up
-running=`docker ps | grep "[_-]${service}[_-]" | sed -E "s/(.* )?([[:alnum:]]+[_-]${service}[_-][[:digit:]]+[^[:space:]]*).*/\2/"`
-echo "looking for running instance of ${service}, found: $running"
+running=`xdo $STG docker-compose ps $service | grep Up`
+echo $running
 
 if [ "$running" ]; then
-#  xdo $STG docker-compose exec $service $*
-#  docker exec -it $running $*
-  echo "$*" | docker exec -i $running /bin/sh -
+  xdo $STG docker-compose exec -T $service $*
 else
   xdo $STG docker-compose run --rm $service $*
 fi
