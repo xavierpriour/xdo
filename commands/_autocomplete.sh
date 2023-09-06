@@ -29,7 +29,7 @@ _xdo_autocomplete () {
   source $XDO_HOME/commands/_internal.sh
   findRoot
   if [ -z "$xdo_root" ]; then
-    exit 0;
+    return 0;
   fi
 
   cd $xdo_root/
